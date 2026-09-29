@@ -33,6 +33,17 @@ struct node
     node *next;
 };
 
+class InputProvider
+{
+public:
+    virtual char get()
+    {
+        return getchNonBlocking();
+    }
+
+    virtual ~InputProvider() = default;
+};
+
 class Snake
 {
 public:
@@ -169,6 +180,15 @@ class GameBoard
 public:
     Snake snake;
     Food food;
+    InputProvider *input;
+
+    GameBoard(InputProvider *inputProvider = nullptr)
+    {
+        if (inputProvider == nullptr)
+            input = new InputProvider();
+        else
+            input = inputProvider;
+    }
 
     void display()
     {
@@ -263,7 +283,7 @@ public:
 
     void handleInput()
     {
-        char ch = getchNonBlocking();
+        char ch = input->get();
         if (ch == '\033')
         {
             getchNonBlocking();
